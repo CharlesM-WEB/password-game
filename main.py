@@ -3,9 +3,8 @@ import json
 import time 
 import random 
 
-trivia = requests.get("https://opentdb.com/api.php?amount=1&category=12&difficulty=easy&type=multiple").json()["results"][0]
-answers = [trivia["correct_answer"]] + trivia["incorrect_answers"]
-random.shuffle(answers)
+
+
 pokeman = requests.get("https://pokeapi.co/api/v2/type/11").json()["pokemon"]
 pokemonnames = []
 for p in pokeman:
@@ -15,7 +14,22 @@ letters = "abcdefghijklmnopqrstuvwxyz"
 weekdays = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
 day= weekdays[time.localtime().tm_wday]
 
+full_list = requests.get("https://opentdb.com/api.php?amount=50&category=12&difficulty=easy&type=multiple").json()["results"]
+q = 0
+trivia  = full_list[q]
 
+while True:
+    trivia["question"] = trivia["question"].replace("&quot;","'")
+    
+    for letter in trivia["correct_answer"].lower():
+        if letter not in numbers and letter not in letters:
+            break
+    else:
+        break 
+    q += 1
+    trivia = full_list[q]
+answers = [trivia["correct_answer"]] + trivia["incorrect_answers"]
+random.shuffle(answers)
 while True: 
     print("Please choose a password:")
     password = input()
@@ -54,7 +68,7 @@ while True:
         continue
     
     if trivia["correct_answer"].lower().strip() not in password.lower():
-        print("rule 6. password must contan the answer to the trivia question" + trivia["question"])
+        print("rule 6. password must contan the answer to the trivia question " + trivia["question"])
         print(f"{answers[0]},{answers[1]},{answers[2]},{answers[3]}")
         continue 
     
